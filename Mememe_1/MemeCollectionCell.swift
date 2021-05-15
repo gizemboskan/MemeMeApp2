@@ -10,6 +10,6 @@ import UIKit
 
 class MemeCollectionCell: UICollectionViewCell {
     
+    // MARK: - Properties
     @IBOutlet var imageView: UIImageView!
-    
 }

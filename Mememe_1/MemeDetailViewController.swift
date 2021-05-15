@@ -10,12 +10,14 @@ import UIKit
 
 class MemeDetailViewController: UIViewController {
     
+    // MARK: - Properties
     var memes = [Meme]()
     @IBOutlet var memeImageView: UIImageView!
     var selectedImage: UIImage?
     var selectedPictureNumber = 0
     var totalPictures = 0
     
+    // MARK: - UIViewController Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -25,31 +27,20 @@ class MemeDetailViewController: UIViewController {
         }
         memeImageView.layer.borderWidth = 1
         memeImageView.layer.borderColor = UIColor.lightGray.cgColor
-        
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        tabBarController?.tabBar.isHidden = true
-        navigationController?.hidesBarsOnTap = true
+        setupBarStatus(status: true)
         
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        setupBarStatus(status: false)
         
-        tabBarController?.tabBar.isHidden = false
-        navigationController?.hidesBarsOnTap = false
     }
-    
-    //  memeImageView.image
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destination.
-     // Pass the selected object to the new view controller.
-     }
-     */
-    
+    // MARK: - Helpers
+    private func setupBarStatus(status: Bool){
+        tabBarController?.tabBar.isHidden = status
+        navigationController?.hidesBarsOnTap = status
+    }
 }

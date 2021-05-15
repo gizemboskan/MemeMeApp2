@@ -10,15 +10,15 @@ import UIKit
 
 class MemeEditorViewController: UIViewController, UINavigationControllerDelegate {
     
-    var memes = [Meme]()
-    
     // MARK: - Properties
     
+    var memes = [Meme]()
     var cameraButton: UIBarButtonItem!
     var albumButton: UIBarButtonItem!
     var memedImage: UIImage? = nil
     
     // MARK: - UI Components
+    
     @IBOutlet var textFieldTop: UITextField!
     @IBOutlet var textFieldBottom: UITextField!
     @IBOutlet var imagePickerView: UIImageView!
@@ -70,18 +70,18 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
             }
             // User completed activity
             self.save()
-            self.present(vc, animated: true, completion: nil)
             vc.dismiss(animated: true, completion: nil)
         }
         
     }
     func save() {
         // Create the meme
-        guard let memedImage = memedImage else { return }
-        let meme = Meme(topText: textFieldTop.text!, bottomText: textFieldBottom.text!, originalImage: imagePickerView.image!, memedImage: memedImage)
-        
-        // Add it to the memes array on the Application Delegate
-        (UIApplication.shared.delegate as! AppDelegate).memes.append(meme)
+        if let memedImage = memedImage {
+            let meme = Meme(topText: textFieldTop.text!, bottomText: textFieldBottom.text!, originalImage: imagePickerView.image!, memedImage: memedImage)
+            
+            // Add it to the memes array on the Application Delegate
+            (UIApplication.shared.delegate as! AppDelegate).memes.append(meme)
+        }
     }
     func generateMemedImage() -> UIImage {
         
@@ -100,9 +100,9 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
     }
     private func pickImage(sourceType: UIImagePickerController.SourceType) {
         let imagePicker = UIImagePickerController()
+        imagePicker.sourceType = sourceType
         imagePicker.allowsEditing = true
         imagePicker.delegate = self
-        imagePicker.sourceType = sourceType
         present(imagePicker, animated: true, completion: nil)
     }
     @objc func pickAnImageFromAlbum(_ sender: Any) {
@@ -143,12 +143,6 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
         
         NotificationCenter.default.removeObserver(self)
     }
-    func getDocumentsDirectory() -> URL {
-        
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        return paths[0]
-        
-    }
     
     private func setupShareButton() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareTapped))
@@ -186,7 +180,6 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
         setDefaultImagePicker()
         setDefaultShareButton()
         navigationItem.title = "Meme Editor! :) "
-        
     }
     
     private func setDefaultTextfields() {
@@ -201,24 +194,20 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
     private func setDefaultShareButton() {
         navigationItem.leftBarButtonItem?.isEnabled = false
     }
+    
 }
 
 // MARK: - Image Picker Controller Delegate
 extension MemeEditorViewController: UIImagePickerControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
-        guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else { return }
-            imagePickerView.image = image
-        
-        let imageName = UUID().uuidString
-        let imagePath = getDocumentsDirectory().appendingPathComponent(imageName)
-        if let jpegData = image.jpegData(compressionQuality: 0.8) {
-            try? jpegData.write(to: imagePath)
-        }
+        guard let image = info[.editedImage] as? UIImage else { return }
+        imagePickerView.image = image
         
         picker.dismiss(animated: true, completion: nil)
         setDefaultTextfields()
         navigationItem.leftBarButtonItem?.isEnabled = true
+        
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {

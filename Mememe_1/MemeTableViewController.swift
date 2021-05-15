@@ -10,12 +10,14 @@ import UIKit
 
 class MemeTableViewController: UITableViewController {
     
+    // MARK: - Properties
     
     var memes : [Meme]! {
         let object = UIApplication.shared.delegate
         let appDelegate = object as! AppDelegate
         return appDelegate.memes
     }
+    // MARK: - UIViewController Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,24 +29,23 @@ class MemeTableViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         tableView.reloadData()
     }
+    // MARK: - Helpers
     
     @objc func addButtonTapped () {
-         if let vc = storyboard?.instantiateViewController(withIdentifier: "editor") as? UINavigationController {
-             self.definesPresentationContext = true
-             vc.modalPresentationStyle = .fullScreen
-             present(vc, animated: true, completion: nil)
-         }
-         
-     }
+        if let vc = storyboard?.instantiateViewController(withIdentifier: "editor") as? UINavigationController {
+            self.definesPresentationContext = true
+            vc.modalPresentationStyle = .fullScreen
+            present(vc, animated: true, completion: nil)
+        }
+        
+    }
     
     // MARK: - Table view data source
-    
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         return memes.count
     }
-    
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Meme", for: indexPath)
@@ -68,19 +69,7 @@ class MemeTableViewController: UITableViewController {
             vc.totalPictures = memes.count
             navigationController?.pushViewController(vc, animated: true)
         }
-        
     }
- 
-    
 }
 
-/*
- // MARK: - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
- // Get the new view controller using segue.destination.
- // Pass the selected object to the new view controller.
- }
- */
 
